@@ -1,6 +1,6 @@
 # GDL90Py
 
-This is a Python 3 encoder/decoder for Garmin DataLink (GDL) 90 messages.
+This is a Python 3 encoder/decoder for Garmin Data Link (GDL) 90 messages.
 Some 3rd party message formats (like ForeFlight) are also supported.
 
 ***Use at your own risk. This is provided as-is and is not intended for any
