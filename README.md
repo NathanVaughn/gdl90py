@@ -77,11 +77,11 @@ may be parsed (for example, a time of reception exceeding 1 second)!
 
 ## FAQ
 
-## Are you planning on adding support for X device?
+### Are you planning on adding support for X device?
 
 No.
 
-## Can this parse messages from a Sentry?
+### Can this parse messages from a Sentry?
 
 No. While I was able to get my hands on one and take a packet capture, it uses an
 undocumented set of messages I have been unable to reverse-engineer.
