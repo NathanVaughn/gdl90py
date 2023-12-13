@@ -14,7 +14,7 @@ from gdl90py.enums import (
     Integrity,
     TrackType,
 )
-from gdl90py.exceptions import InvalidCallsign
+from gdl90py.exceptions import DataTooLong, InvalidCallsign
 from gdl90py.messages._base_message import BaseMessage
 
 
@@ -413,7 +413,7 @@ class BaseTrafficReport(BaseMessage):
         pop_bits(data, cls.RESERVED_BITS)
 
         if len(data) != 0:
-            raise ValueError("Data is too long")
+            raise DataTooLong(f"Data is {len(data)} bits long")
 
         return cls(
             traffic_alert=traffic_alert,

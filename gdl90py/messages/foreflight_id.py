@@ -6,6 +6,7 @@ from bitstring import BitArray
 
 import gdl90py.gdl90_helpers
 from gdl90py.bitarray_helpers import pop_bits
+from gdl90py.exceptions import DataTooLong
 from gdl90py.messages._base_message import BaseMessage
 
 
@@ -120,7 +121,7 @@ class ForeFlightIDMessage(BaseMessage):
         pop_bits(data, cls.RESERVED_BITS_2)  # reserved
 
         if len(data) != 0:
-            raise ValueError("Data is too long")
+            raise DataTooLong(f"Data is {len(data)} bits long")
 
         return ForeFlightIDMessage(
             device_serial_number=device_serial_number,

@@ -6,6 +6,7 @@ from bitstring import BitArray
 
 import gdl90py.gdl90_helpers
 from gdl90py.bitarray_helpers import pop_bits
+from gdl90py.exceptions import DataTooLong
 from gdl90py.messages._base_message import BaseMessage
 
 
@@ -105,7 +106,7 @@ class OwnshipGeometricAltitudeMessage(BaseMessage):
         )
 
         if len(data) != 0:
-            raise ValueError("Data is too long")
+            raise DataTooLong(f"Data is {len(data)} bits long")
 
         return OwnshipGeometricAltitudeMessage(
             geo_altitude=geo_altitude,

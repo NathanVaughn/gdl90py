@@ -7,6 +7,7 @@ from bitstring import BitArray
 
 import gdl90py.gdl90_helpers
 from gdl90py.bitarray_helpers import pop_bits
+from gdl90py.exceptions import DataTooLong
 from gdl90py.messages._base_message import BaseMessage
 
 SECONDS_PER_MINUTE = 60
@@ -269,7 +270,7 @@ class HeartbeatMessage(BaseMessage):
         )
 
         if len(data) != 0:
-            raise ValueError("Data is too long")
+            raise DataTooLong(f"Data is {len(data)} bits long")
 
         return HeartbeatMessage(
             gps_position_valid=gps_position_valid,
