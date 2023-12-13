@@ -1,0 +1,186 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from bitstring import BitArray
+
+import gdl90py.gdl90_helpers
+from gdl90py.bitarray_helpers import pop_bits
+from gdl90py.messages._base_message import BaseMessage
+
+
+@dataclass(frozen=True)
+class ForeFlightAHRSMessage(BaseMessage):
+    MESSAGE_IDS = (gdl90py.gdl90_helpers.FOREFLIGHT_MESSAGE_ID, 1)
+
+    roll: int | None
+    """
+    Degrees. Positive: right wing down. Negative: right wing up.
+    """
+    pitch: int | None
+    """
+    Degrees. Positive: nose up. Negative: nose down
+    """
+    is_magnetic_heading: bool
+    """
+    Whether or not the heading is true heading or magnetic heading.
+    """
+    heading: int | None
+    """
+    Heading is in degrees.
+    """
+    indicated_airspeed: int | None
+    """
+    Indicated airspeed in knots.
+    """
+    true_airspeed: int | None
+    """
+    True airspeed in knots.
+    """
+
+    # constants
+    ROLL_BITS = 16
+    ROLL_RESOLUTION = 1 / 10
+    ROLL_MIN = -1800
+    ROLL_MAX = 1800
+    ROLL_INVALID_VALUE = 0x7FFF
+    PITCH_BITS = 16
+    PITCH_RESOLUTION = 1 / 10
+    PITCH_MIN = -1800
+    PITCH_MAX = 1800
+    PITCH_INVALID_VALUE = 0x7FFF
+    HEADING_BITS = 15
+    HEADING_RESOLUTION = 1 / 10
+    HEADING_MIN = -3600
+    HEADING_MAX = 3600
+    HEADING_INVALID_VALUE = 0xFFFF
+    INDICATED_AIRSPEED_BITS = 16
+    INDICATED_AIRSPEED_INVALID_VALUE = 0xFFFF
+    TRUE_AIRSPEED_BITS = 16
+    TRUE_AIRSPEED_INVALID_VALUE = 0xFFFF
+
+    def _serialize_roll(self) -> BitArray:
+        if self.roll is None or not (self.ROLL_MIN <= self.roll <= self.ROLL_MAX):
+            return self._serialize_uint(self.ROLL_INVALID_VALUE, self.ROLL_BITS)
+
+        return self._serialize_resolution_int(
+            self.roll, self.ROLL_RESOLUTION, self.ROLL_BITS
+        )
+
+    @classmethod
+    def _deserialize_roll(cls, roll_bitarray: BitArray) -> int | None:
+        if roll_bitarray.uint == cls.ROLL_INVALID_VALUE:
+            return None
+
+        return cls._deserialize_resolution_int(roll_bitarray, cls.ROLL_RESOLUTION)
+
+    def _serialize_pitch(self) -> BitArray:
+        if self.pitch is None or not (self.PITCH_MIN <= self.pitch <= self.PITCH_MAX):
+            return self._serialize_uint(self.PITCH_INVALID_VALUE, self.PITCH_BITS)
+
+        return self._serialize_resolution_int(
+            self.pitch, self.PITCH_RESOLUTION, self.PITCH_BITS
+        )
+
+    @classmethod
+    def _deserialize_pitch(cls, pitch_bitarray: BitArray) -> int | None:
+        if pitch_bitarray.uint == cls.PITCH_INVALID_VALUE:
+            return None
+
+        return cls._deserialize_resolution_int(pitch_bitarray, cls.PITCH_RESOLUTION)
+
+    def _serialize_is_magnetic_heading(self) -> BitArray:
+        return self._serialize_bool(self.is_magnetic_heading)
+
+    @classmethod
+    def _deserialize_is_magnetic_heading(
+        cls, is_magnetic_heading_bitarray: BitArray
+    ) -> bool:
+        return cls._deserialize_bool(is_magnetic_heading_bitarray)
+
+    def _serialize_heading(self) -> BitArray:
+        if self.heading is None or not (
+            self.HEADING_MIN <= self.heading <= self.HEADING_MAX
+        ):
+            return self._serialize_uint(self.HEADING_INVALID_VALUE, self.HEADING_BITS)
+
+        return self._serialize_resolution_int(
+            self.heading, self.HEADING_RESOLUTION, self.HEADING_BITS
+        )
+
+    @classmethod
+    def _deserialize_heading(cls, heading_bitarray: BitArray) -> int | None:
+        if heading_bitarray.uint == cls.HEADING_INVALID_VALUE:
+            return None
+
+        return cls._deserialize_resolution_int(heading_bitarray, cls.HEADING_RESOLUTION)
+
+    def _serialize_indicated_airspeed(self) -> BitArray:
+        if self.indicated_airspeed is None:
+            return self._serialize_uint(
+                self.INDICATED_AIRSPEED_INVALID_VALUE, self.INDICATED_AIRSPEED_BITS
+            )
+
+        return self._serialize_int(
+            self.indicated_airspeed, self.INDICATED_AIRSPEED_BITS
+        )
+
+    @classmethod
+    def _deserialize_indicated_airspeed(
+        cls, indicated_airspeed_bitarray: BitArray
+    ) -> int | None:
+        if indicated_airspeed_bitarray.uint == cls.INDICATED_AIRSPEED_INVALID_VALUE:
+            return None
+
+        return cls._deserialize_int(indicated_airspeed_bitarray)
+
+    def _serialize_true_airspeed(self) -> BitArray:
+        if self.true_airspeed is None:
+            return self._serialize_uint(
+                self.TRUE_AIRSPEED_INVALID_VALUE, self.TRUE_AIRSPEED_BITS
+            )
+
+        return self._serialize_int(self.true_airspeed, self.TRUE_AIRSPEED_BITS)
+
+    @classmethod
+    def _deserialize_true_airspeed(cls, true_airspeed_bitarray: BitArray) -> int | None:
+        if true_airspeed_bitarray.uint == cls.TRUE_AIRSPEED_INVALID_VALUE:
+            return None
+
+        return cls._deserialize_int(true_airspeed_bitarray)
+
+    def serialize(self, outgoing_lsb: bool = True) -> bytes:
+        all_data = (
+            self._serialize_roll()
+            + self._serialize_pitch()
+            + self._serialize_is_magnetic_heading()
+            + self._serialize_heading()
+            + self._serialize_indicated_airspeed()
+            + self._serialize_true_airspeed()
+        )
+        return gdl90py.gdl90_helpers.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
+
+    @classmethod
+    def deserialize(cls, data: BitArray) -> ForeFlightAHRSMessage:
+        roll = cls._deserialize_roll(pop_bits(data, cls.ROLL_BITS))
+        pitch = cls._deserialize_pitch(pop_bits(data, cls.PITCH_BITS))
+        is_magnetic_heading = cls._deserialize_is_magnetic_heading(pop_bits(data, 1))
+        heading = cls._deserialize_heading(pop_bits(data, cls.HEADING_BITS))
+        indicated_airspeed = cls._deserialize_indicated_airspeed(
+            pop_bits(data, cls.INDICATED_AIRSPEED_BITS)
+        )
+        true_airspeed = cls._deserialize_true_airspeed(
+            pop_bits(data, cls.TRUE_AIRSPEED_BITS)
+        )
+
+        if len(data) != 0:
+            raise ValueError("Data is too long")
+
+        return ForeFlightAHRSMessage(
+            roll=roll,
+            pitch=pitch,
+            is_magnetic_heading=is_magnetic_heading,
+            heading=heading,
+            indicated_airspeed=indicated_airspeed,
+            true_airspeed=true_airspeed,
+        )
