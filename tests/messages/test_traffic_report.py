@@ -1,5 +1,4 @@
 import pytest
-from bitstring import BitArray
 
 from gdl90py.enums import (
     Accuracy,
@@ -39,8 +38,9 @@ def test_traffic_report_serialize():
 
 
 def test_traffic_report_deserialize():
-    data = b"\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07\xB0\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00"
-    tr = TrafficReportMessage.deserialize(BitArray(bytes=data))
+    tr = TrafficReportMessage.deserialize(
+        b"\x7E\x14\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07\xB0\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00\x57\xD6\x7e"
+    )
 
     assert tr.traffic_alert is False
     assert tr.address_type == AddressType.ads_b_icao

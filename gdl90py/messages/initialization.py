@@ -91,7 +91,11 @@ class InitializationMessage(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> InitializationMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> InitializationMessage:
+        data = cls._clean_data(data, incoming_msb)
+
         pop_bits(data, cls.RESERVED_1_BITS)  # reserved
         audio_test = cls._deserialize_audio_test(pop_bits(data, 1))
         pop_bits(data, cls.RESERVED_2_BITS)  # reserved

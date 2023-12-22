@@ -237,7 +237,11 @@ class HeartbeatMessage(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> HeartbeatMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> HeartbeatMessage:
+        data = cls._clean_data(data, incoming_msb)
+
         gps_position_valid = cls._deserialize_gps_position_valid(pop_bits(data, 1))
         maintenance_required = cls._deserialize_maintenance_required(pop_bits(data, 1))
         ident_talkback = cls._deserialize_ident_talkback(pop_bits(data, 1))

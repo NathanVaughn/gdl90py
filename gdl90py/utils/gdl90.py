@@ -117,7 +117,9 @@ def build(message_ids: tuple[int, ...], data: BitArray, outgoing_lsb: bool) -> b
     return message_id_data_crc_escaped
 
 
-def deconstruct(data: bytes, incoming_msb: bool) -> tuple[tuple[int, ...], BitArray]:
+def deconstruct(
+    data: bytes | bytearray, incoming_msb: bool
+) -> tuple[tuple[int, ...], BitArray]:
     """
     Deconstruct a message. Checks the CRC and returns the message ID(s)
     and the message data seperately.

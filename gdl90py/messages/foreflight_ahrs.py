@@ -162,7 +162,11 @@ class ForeFlightAHRSMessage(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> ForeFlightAHRSMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> ForeFlightAHRSMessage:
+        data = cls._clean_data(data, incoming_msb)
+
         roll = cls._deserialize_roll(pop_bits(data, cls.ROLL_BITS))
         pitch = cls._deserialize_pitch(pop_bits(data, cls.PITCH_BITS))
         is_magnetic_heading = cls._deserialize_is_magnetic_heading(pop_bits(data, 1))

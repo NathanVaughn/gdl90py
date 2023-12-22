@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Self
 
 from bitstring import BitArray
 
@@ -83,7 +84,11 @@ class BaseUATReportMessage(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> BaseUATReportMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> Self:
+        data = cls._clean_data(data, incoming_msb)
+
         time_of_reception = cls._deserialize_time_of_reception(
             pop_bits(data, cls.TIME_OF_RECEPTION_BITS)
         )

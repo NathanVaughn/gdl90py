@@ -93,7 +93,11 @@ class OwnshipGeometricAltitudeMessage(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> OwnshipGeometricAltitudeMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> OwnshipGeometricAltitudeMessage:
+        data = cls._clean_data(data, incoming_msb)
+
         geo_altitude = cls._deserialize_geo_altitude(
             pop_bits(data, cls.GEO_ALTITUDE_BITS)
         )

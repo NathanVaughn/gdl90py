@@ -107,7 +107,11 @@ class ForeFlightIDMessage(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> ForeFlightIDMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> ForeFlightIDMessage:
+        data = cls._clean_data(data, incoming_msb)
+
         version = cls._deserialize_version(pop_bits(data, cls.VERSION_BITS))
         device_serial_number = cls._deserialize_device_serial_number(
             pop_bits(data, cls.DEVICE_SERIAL_NUMBER_BITS)

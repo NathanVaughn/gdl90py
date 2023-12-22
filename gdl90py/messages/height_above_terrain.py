@@ -47,7 +47,11 @@ class HeightAboveTerrainMessage(BaseMessage):
         )
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> HeightAboveTerrainMessage:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> HeightAboveTerrainMessage:
+        data = cls._clean_data(data, incoming_msb)
+
         height_above_terrain = cls._deserialize_height_above_terrain(
             pop_bits(data, cls.HEIGHT_ABOVE_TERRAIN_BITS)
         )

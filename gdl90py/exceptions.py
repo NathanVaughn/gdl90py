@@ -2,6 +2,10 @@ class UnkownMessageID(Exception):
     pass
 
 
+class InvalidMessageID(Exception):
+    pass
+
+
 class DataTooLong(Exception):
     pass
 

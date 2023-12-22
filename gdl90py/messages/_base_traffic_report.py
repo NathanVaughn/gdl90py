@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Self
 
 from bitstring import BitArray
 
@@ -377,7 +378,11 @@ class BaseTrafficReport(BaseMessage):
         return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: BitArray) -> BaseTrafficReport:
+    def deserialize(
+        cls, data: BitArray | bytes | bytearray, incoming_msb: bool = True
+    ) -> Self:
+        data = cls._clean_data(data, incoming_msb)
+
         traffic_alert = cls._deserialize_traffic_alert(
             pop_bits(data, cls.TRAFFIC_ALERT_BITS)
         )

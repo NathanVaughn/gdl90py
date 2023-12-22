@@ -4,7 +4,8 @@ from typing import Self, Type, TypeVar
 
 from bitstring import BitArray
 
-from gdl90py.exceptions import BadIntegerSize, UnexpectedNegative
+import gdl90py.utils.gdl90
+from gdl90py.exceptions import BadIntegerSize, InvalidMessageID, UnexpectedNegative
 
 """
 From the Specification:
@@ -35,8 +36,24 @@ class BaseMessage(ABC):
         """
         pass
 
+    @classmethod
+    def _clean_data(
+        cls, data: bytes | bytearray | BitArray, incoming_msb: bool = False
+    ) -> BitArray:
+        """
+        Clean incoming data to remove flag bytes, CRC, message ID(s), and unescape
+        """
+        if isinstance(data, (bytes, bytearray, memoryview)):
+            message_ids, data = gdl90py.utils.gdl90.deconstruct(data, incoming_msb)
+            if message_ids != cls.MESSAGE_IDS:
+                raise InvalidMessageID(f"Invalid message ID(s) {message_ids}")
+
+        return data
+
     @abstractmethod
-    def deserialize(self, data: BitArray) -> Self:
+    def deserialize(
+        self, data: bytes | bytearray | BitArray, incoming_msb: bool = False
+    ) -> Self:
         pass
 
     def _serialize_uint(
