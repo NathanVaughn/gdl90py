@@ -1,4 +1,4 @@
-import gdl90py.gdl90_helpers
+import gdl90py.utils.gdl90
 from gdl90py.exceptions import UnkownMessageID
 from gdl90py.messages._base_message import BaseMessage
 from gdl90py.messages.basic_uat_report import BasicUATReportMessage
@@ -37,7 +37,7 @@ def parse_message(
     """
     Given a single message, parse and return a data class.
     """
-    message_ids, message_data = gdl90py.gdl90_helpers.deconstruct(data, incoming_msb)
+    message_ids, message_data = gdl90py.utils.gdl90.deconstruct(data, incoming_msb)
     if message_ids not in KNOWN_MESSAGE_TYPES:
         # skip if asked to ignore
         if ignore_unknwon:
@@ -56,14 +56,14 @@ def parse_messages(
     `incoming_msb` should be set to True if the bytes provided have the Most
     Signficiant Bit first.
     """
-    flag_byte_count = data.count(gdl90py.gdl90_helpers.FLAG_BYTE)
+    flag_byte_count = data.count(gdl90py.utils.gdl90.FLAG_BYTE)
     message_count = int(flag_byte_count / 2)
 
     output: list[BaseMessage] = []
 
     for _ in range(message_count):
         # find the next flag byte. offset by one to skip the first one
-        message_end_index = data.index(gdl90py.gdl90_helpers.FLAG_BYTE, 1)
+        message_end_index = data.index(gdl90py.utils.gdl90.FLAG_BYTE, 1)
         # parse the message
         msg = parse_message(data[: message_end_index + 1], incoming_msb, ignore_unknwon)
         if msg is not None:

@@ -49,6 +49,6 @@ def print_hex(data: BitArray | bytes) -> None:
     Print a bitarray as seperate hexadecimal pairs.
     """
     if isinstance(data, BitArray):
-        print(" ".join(f"0x{h}" for h in textwrap.wrap(data.hex(), 2)))
+        print(" ".join(f"0x{h}" for h in textwrap.wrap(data.hex, 2)))
     else:
         print(" ".join("0x{:02x}".format(b) for b in data))

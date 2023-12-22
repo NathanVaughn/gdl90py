@@ -2,8 +2,8 @@ from functools import cache
 
 from bitstring import BitArray
 
-from gdl90py.bitarray_helpers import lsb_bytes
 from gdl90py.exceptions import InvalidCRC, MissingFlagBytes
+from gdl90py.utils.bitarray import lsb_bytes
 
 FLAG_BYTE = 0x7E
 CONTROL_ESCAPE_BYTE = 0x7D

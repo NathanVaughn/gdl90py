@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 from bitstring import BitArray
 
-import gdl90py.gdl90_helpers
-from gdl90py.bitarray_helpers import pop_bits
+import gdl90py.utils.gdl90
 from gdl90py.exceptions import DataTooLong
 from gdl90py.messages._base_message import BaseMessage
+from gdl90py.utils.bitarray import pop_bits
 
 
 @dataclass(frozen=True)
@@ -88,7 +88,7 @@ class InitializationMessage(BaseMessage):
             + self._serialize_CSA_audio_disable()
             + self._serialize_CSA_disable()
         )
-        return gdl90py.gdl90_helpers.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
+        return gdl90py.utils.gdl90.build(self.MESSAGE_IDS, all_data, outgoing_lsb)
 
     @classmethod
     def deserialize(cls, data: BitArray) -> InitializationMessage:

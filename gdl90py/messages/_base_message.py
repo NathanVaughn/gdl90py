@@ -51,8 +51,8 @@ class BaseMessage(ABC):
             )
 
         if constrain:
-            value = min(value, 2**bits)
-        elif value > 2**bits:
+            value = min(value, (2**bits) - 1)
+        elif value > (2**bits) - 1:
             raise BadIntegerSize(
                 f"{value} exceeds the maximum value for an unsigned {bits}-bit integer"
             )
@@ -71,13 +71,13 @@ class BaseMessage(ABC):
         Serialize a signed integer.
         """
         if constrain:
-            value = min(value, (2**bits) - 1)
-            value = max(value, 0 - (2**bits))
-        elif value > (2**bits) - 1:
+            value = min(value, (2 ** (bits - 1)) - 1)
+            value = max(value, 0 - (2 ** (bits - 1)))
+        elif value > (2 ** (bits - 1)) - 1:
             raise BadIntegerSize(
                 f"{value} exceeds the maximum value for a signed {bits}-bit integer"
             )
-        elif value < 0 - (2**bits):
+        elif value < 0 - (2 ** (bits - 1)):
             raise BadIntegerSize(
                 f"{value} exceeds the minimum value for a signed {bits}-bit integer"
             )
@@ -159,7 +159,7 @@ class BaseMessage(ABC):
         """
         Serialize a boolean.
         """
-        return BitArray(uint=int(value), length=1)
+        return self._serialize_uint(int(value), 1)
 
     @classmethod
     def _deserialize_bool(cls, bitarray: BitArray) -> bool:
@@ -193,7 +193,7 @@ class BaseMessage(ABC):
         """
         Serialize a Enum.
         """
-        return BitArray(uint=value.value, length=length)
+        return self._serialize_uint(value.value, length)
 
     @classmethod
     def _deserialize_enum(cls, bitarray: BitArray, enum: Type[T]) -> T:

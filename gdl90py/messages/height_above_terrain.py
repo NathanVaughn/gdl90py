@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 from bitstring import BitArray
 
-import gdl90py.gdl90_helpers
-from gdl90py.bitarray_helpers import pop_bits
+import gdl90py.utils.gdl90
 from gdl90py.exceptions import DataTooLong
 from gdl90py.messages._base_message import BaseMessage
+from gdl90py.utils.bitarray import pop_bits
 
 
 @dataclass(frozen=True)
@@ -42,7 +42,7 @@ class HeightAboveTerrainMessage(BaseMessage):
         return cls._deserialize_int(height_above_terrain_bitarray)
 
     def serialize(self, outgoing_lsb: bool = True) -> bytes:
-        return gdl90py.gdl90_helpers.build(
+        return gdl90py.utils.gdl90.build(
             self.MESSAGE_IDS, self._serialize_height_above_terrain(), outgoing_lsb
         )
 
