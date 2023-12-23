@@ -2,12 +2,12 @@ import pytest
 from bitstring import BitArray
 
 from gdl90py.utils.bitarray import (
+    format_hex,
     lsb,
     lsb_bytearray,
     lsb_bytes,
     lsb_int,
     pop_bits,
-    print_hex,
 )
 
 
@@ -46,7 +46,5 @@ def test_lsb_int():
     "input_, expected",
     ((b"\x12\x34", "0x12 0x34"), (BitArray(bytes=b"\x12\x34"), "0x12 0x34")),
 )
-def test_print_hex(capsys, input_: bytes | BitArray, expected: str):
-    print_hex(input_)
-    captured = capsys.readouterr()
-    assert captured.out.strip() == expected
+def test_format_hex_hex(input_: bytes | BitArray, expected: str):
+    assert format_hex(input_) == expected

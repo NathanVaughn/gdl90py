@@ -44,11 +44,11 @@ def lsb_int(int_: int, length: int = 8) -> int:
     return lsb(BitArray(uint=int_, length=length)).uint
 
 
-def print_hex(data: BitArray | bytes) -> None:
+def format_hex(data: BitArray | bytes) -> str:
     """
     Print a bitarray as seperate hexadecimal pairs.
     """
     if isinstance(data, BitArray):
-        print(" ".join(f"0x{h}" for h in textwrap.wrap(data.hex, 2)))
+        return " ".join(f"0x{h}" for h in textwrap.wrap(data.hex, 2))
     else:
-        print(" ".join("0x{:02x}".format(b) for b in data))
+        return " ".join("0x{:02x}".format(b) for b in data)

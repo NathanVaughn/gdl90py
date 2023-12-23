@@ -1,5 +1,8 @@
 import datetime
 
+import pytest
+
+from gdl90py.exceptions import DataTooLong
 from gdl90py.messages.heartbeat import HeartbeatMessage
 
 
@@ -69,3 +72,10 @@ def test_heartbeat_deserialize():
     assert hb == HeartbeatMessage.deserialize(
         b"\x7e\x00\xa9\x20\xf0\x3c\xfa\xa6\x7f\x81\x7e"
     )
+
+
+def test_heartbeat_deserialize_too_long():
+    with pytest.raises(DataTooLong):
+        HeartbeatMessage.deserialize(
+            b"\x7e\x00\xa9\x20\xf0\x3c\xfa\xa6\x00\xa9\xfe\x7e"
+        )

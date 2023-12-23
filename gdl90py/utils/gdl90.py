@@ -3,7 +3,7 @@ from functools import cache
 from bitstring import BitArray
 
 from gdl90py.exceptions import InvalidCRC, MissingFlagBytes
-from gdl90py.utils.bitarray import lsb_bytes
+from gdl90py.utils.bitarray import format_hex, lsb_bytes
 
 FLAG_BYTE = 0x7E
 CONTROL_ESCAPE_BYTE = 0x7D
@@ -46,7 +46,7 @@ def check_crc(data: bytes, crc: bytes) -> None:
     computed_crc = compute_crc(data)
     if computed_crc != crc:
         raise InvalidCRC(
-            f"Recieved CRC {crc} does not match computed CRC {computed_crc}"
+            f"Recieved CRC {format_hex(crc)} does not match computed CRC {format_hex(computed_crc)}"
         )
 
 
