@@ -24,61 +24,51 @@ def test_ownship_geometric_altitude_deserialize_too_long():
         )
 
 
-@pytest.mark.parametrize("ga, expected", ((-1000, 0xFF38), (0, 0x0000), (1000, 0x00C8)))
-def test_geo_altitude_serialize(ga: int, expected: int):
-    o = OwnshipGeometricAltitudeMessage(ga, False, None)
-    assert o._serialize_geo_altitude().uint == expected
+@pytest.mark.parametrize(
+    "ga, expected", ((-1000, b"\xFF\x38"), (0, b"\x00\x00"), (1000, b"\x00\xC8"))
+)
+def test_geo_altitude_serialize(ga: int, expected: bytes):
+    oga = OwnshipGeometricAltitudeMessage(ga, False, None)
+    assert oga.serialize(outgoing_lsb=False)[2:4] == expected
 
 
 @pytest.mark.parametrize(
-    "gahex, expected", (("0xFF38", -1000), ("0x0000", 0), ("0x00C8", 1000))
+    "gabytes, expected", ((b"\xFF\x38", -1000), (b"\x00\x00", 0), (b"\x00\xC8", 1000))
 )
-def test_geo_altitude_deserialize(gahex: str, expected: int):
-    assert (
-        OwnshipGeometricAltitudeMessage._deserialize_geo_altitude(BitArray(hex=gahex))
-        == expected
+def test_geo_altitude_deserialize(gabytes: bytes, expected: int):
+    oga = OwnshipGeometricAltitudeMessage(expected, False, None)
+    assert oga == OwnshipGeometricAltitudeMessage.deserialize(
+        BitArray(bytes=gabytes + b"\x7f\xff")
     )
 
 
 @pytest.mark.parametrize(
     "wi, vfom, expected",
     (
-        (True, None, 0xFFFF),
-        (False, 40000, 0x7FFE),
-        (False, 10, 0x000A),
-        (True, 50, 0x8032),
+        (True, None, b"\xFF\xFF"),
+        (False, 40000, b"\x7F\xFE"),
+        (False, 10, b"\x00\x0A"),
+        (True, 50, b"\x80\x32"),
     ),
 )
-def test_vertical_metrics_serialize(wi: bool, vfom: int, expected: int):
-    o = OwnshipGeometricAltitudeMessage(500, wi, vfom)
-    assert (
-        o._serialize_vertical_warning_indicator()
-        + o._serialize_vertical_figure_of_merit()
-    ).uint == expected
+def test_vertical_metrics_serialize(wi: bool, vfom: int, expected: bytes):
+    oga = OwnshipGeometricAltitudeMessage(500, wi, vfom)
+    assert oga.serialize(outgoing_lsb=False)[4:6] == expected
 
 
 @pytest.mark.parametrize(
-    "vmhex, expected_wi, expected_vfom",
+    "vmbytes, expected_wi, expected_vfom",
     (
-        ("0xFFFF", True, None),
-        ("0x7FFE", False, 32766),
-        ("0x000A", False, 10),
-        ("0x8032", True, 50),
+        (b"\xFF\xFF", True, None),
+        (b"\x7F\xFE", False, 32766),
+        (b"\x00\x0A", False, 10),
+        (b"\x80\x32", True, 50),
     ),
 )
 def test_vertical_metrics_deserialize(
-    vmhex: str, expected_wi: bool, expected_vfom: int
+    vmbytes: bytes, expected_wi: bool, expected_vfom: int
 ):
-    bitarray = BitArray(hex=vmhex)
-    assert (
-        OwnshipGeometricAltitudeMessage._deserialize_vertical_warning_indicator(
-            bitarray[0:1]
-        )
-        == expected_wi
-    )
-    assert (
-        OwnshipGeometricAltitudeMessage._deserialize_vertical_figure_of_merit(
-            bitarray[1:]
-        )
-        == expected_vfom
+    oga = OwnshipGeometricAltitudeMessage(500, expected_wi, expected_vfom)
+    assert oga == OwnshipGeometricAltitudeMessage.deserialize(
+        BitArray(bytes=b"\x00\x64" + vmbytes)
     )

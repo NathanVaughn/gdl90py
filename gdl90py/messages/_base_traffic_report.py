@@ -106,6 +106,7 @@ class BaseTrafficReport(BaseMessage):
     PRESSURE_ALTITUDE_RESOLUTION = 25
     PRESSURE_ALTITUDE_OFFSET = 1000
     PRESSURE_ALTITUDE_MINIMUM = -1000
+    PRESSURE_ALTITUDE_MAXIMUM = 101350
     PRESSURE_ALTITUDE_INVALID_VALUE = 0xFFF
     TRACK_TYPE_BITS = 2
     INTEGRITY_BITS = 4
@@ -200,15 +201,19 @@ class BaseTrafficReport(BaseMessage):
         )
 
     def _serialize_pressure_altitude(self) -> BitArray:
-        if self.pressure_altitude is None or not (
-            self.PRESSURE_ALTITUDE_MINIMUM <= self.pressure_altitude
-        ):
+        if self.pressure_altitude is None:
             return self._serialize_uint(
                 self.PRESSURE_ALTITUDE_INVALID_VALUE, self.PRESSURE_ALTITUDE_BITS
             )
 
+        # constrain
+        pressure_altitude = max(
+            min(self.pressure_altitude, self.PRESSURE_ALTITUDE_MAXIMUM),
+            self.PRESSURE_ALTITUDE_MINIMUM,
+        )
+
         return self._serialize_resolution_offset_uint(
-            self.pressure_altitude,
+            pressure_altitude,
             self.PRESSURE_ALTITUDE_OFFSET,
             self.PRESSURE_ALTITUDE_RESOLUTION,
             self.PRESSURE_ALTITUDE_BITS,
@@ -258,8 +263,7 @@ class BaseTrafficReport(BaseMessage):
                 self.HORIZONTAL_VELOCITY_INVALID, self.HORIZONTAL_VELOCITY_BITS
             )
 
-        if horizontal_velocity > self.HORIZONTAL_VELOCITY_MAX:
-            horizontal_velocity = self.HORIZONTAL_VELOCITY_MAX_VALUE
+        horizontal_velocity = min(horizontal_velocity, self.HORIZONTAL_VELOCITY_MAX)
 
         return self._serialize_uint(horizontal_velocity, self.HORIZONTAL_VELOCITY_BITS)
 
@@ -322,15 +326,23 @@ class BaseTrafficReport(BaseMessage):
 
     def _serialize_callsign(self) -> BitArray:
         callsign = self.callsign
-        if callsign is None:
-            callsign = " " * self.CALLSIGN_BITS
 
-        # force upper case
-        callsign = callsign.upper()[: self.CALLSIGN_BITS]
+        # # remove trailing whitespace
+        if callsign is not None:
+            callsign = callsign.strip()
 
-        # make sure characters are alphanumeric
-        if not callsign.isalnum():
-            raise InvalidCallsign("Invalid callsign. It contains illegal characters.")
+        if callsign:
+            # force upper case
+            callsign = callsign.upper()[: self.CALLSIGN_BITS]
+
+            # make sure characters are alphanumeric
+            if not callsign.isalnum():
+                raise InvalidCallsign(
+                    "Invalid callsign. It contains illegal characters."
+                )
+
+        else:
+            callsign = ""
 
         # this pads to the right as needed
         return self._serialize_str(callsign, self.CALLSIGN_BITS)
