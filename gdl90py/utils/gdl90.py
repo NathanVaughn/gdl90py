@@ -39,11 +39,15 @@ def compute_crc(data: bytes) -> bytes:
     return crc.to_bytes(length=2, byteorder="little")
 
 
-def check_crc(data: bytes, crc: bytes) -> bool:
+def check_crc(data: bytes, crc: bytes) -> None:
     """
     Checks if CRC is valid.
     """
-    return compute_crc(data) == crc
+    computed_crc = compute_crc(data)
+    if computed_crc != crc:
+        raise InvalidCRC(
+            f"Recieved CRC {crc} does not match computed CRC {computed_crc}"
+        )
 
 
 def escape(data: bytes) -> bytearray:
@@ -143,8 +147,7 @@ def deconstruct(
     message_id_data = unescaped_message[:-2]
 
     # check the CRC
-    if not check_crc(message_id_data, received_crc):
-        raise InvalidCRC("Invalid CRC")
+    check_crc(message_id_data, received_crc)
 
     # Extract message ID and data
     message_id = message_id_data[0]

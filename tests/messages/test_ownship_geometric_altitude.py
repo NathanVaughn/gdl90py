@@ -1,7 +1,27 @@
 import pytest
 from bitstring import BitArray
 
+from gdl90py.exceptions import DataTooLong
 from gdl90py.messages.ownship_geometric_altitude import OwnshipGeometricAltitudeMessage
+
+
+def test_ownship_geometric_altitude_serialize():
+    oga = OwnshipGeometricAltitudeMessage(500, False, None)
+    assert oga.serialize(outgoing_lsb=False) == b"\x7e\x0b\x00\x64\x7f\xff\x2c\xa3\x7e"
+
+
+def test_ownship_geometric_altitude_deserialize():
+    oga = OwnshipGeometricAltitudeMessage(500, False, None)
+    assert oga == OwnshipGeometricAltitudeMessage.deserialize(
+        b"\x7e\x0b\x00\x64\x7f\xff\x2c\xa3\x7e"
+    )
+
+
+def test_ownship_geometric_altitude_deserialize_too_long():
+    with pytest.raises(DataTooLong):
+        OwnshipGeometricAltitudeMessage.deserialize(
+            b"\x7e\x0b\x00\x64\x7f\xff\x00\x89\xa9\x7e"
+        )
 
 
 @pytest.mark.parametrize("ga, expected", ((-1000, 0xFF38), (0, 0x0000), (1000, 0x00C8)))

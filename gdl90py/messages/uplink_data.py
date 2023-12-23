@@ -9,4 +9,4 @@ from gdl90py.messages._base_uat_report import BaseUATReportMessage
 class UplinkDataMessage(BaseUATReportMessage):
     MESSAGE_IDS = (7,)
 
-    UPLINK_PAYLOAD_BITS = 424 * 8
+    UPLINK_PAYLOAD_BITS = 432 * 8

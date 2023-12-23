@@ -5,11 +5,13 @@ import pytest
 from bitstring import BitArray
 
 from gdl90py.enums import EmergencyPriorityCode, EmitterCategory
-from gdl90py.exceptions import BadIntegerSize, UnexpectedNegative
+from gdl90py.exceptions import BadIntegerSize, InvalidMessageID, UnexpectedNegative
 from gdl90py.messages._base_message import BaseMessage
 
 
 class TestMessage(BaseMessage):
+    MESSAGE_IDS = 99
+
     def serialize(self, outgoing_lsb: bool = True) -> None:
         pass
 
@@ -272,3 +274,8 @@ def test__deserialize_enum(
     expected: IntEnum,
 ):
     assert TestMessage._deserialize_enum(bitarray, enum) == expected
+
+
+def test__clean_data_invalid_message_id():
+    with pytest.raises(InvalidMessageID):
+        TestMessage._clean_data(b"\x7e\x00\x00\x00\x7e")

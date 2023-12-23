@@ -43,10 +43,10 @@ def test_lsb_int():
 
 
 @pytest.mark.parametrize(
-    "input_, expected", ((b"\x12\x34", "0x12 0x34"), (b"\x12", "0x12"))
+    "input_, expected",
+    ((b"\x12\x34", "0x12 0x34"), (BitArray(bytes=b"\x12\x34"), "0x12 0x34")),
 )
-def test_print_hex(capsys, input_: bytes, expected: str):
-    bitarray_input = BitArray(bytes=input_)
-    print_hex(bitarray_input)
+def test_print_hex(capsys, input_: bytes | BitArray, expected: str):
+    print_hex(input_)
     captured = capsys.readouterr()
     assert captured.out.strip() == expected

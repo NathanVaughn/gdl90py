@@ -34,7 +34,7 @@ class BaseMessage(ABC):
         `outgoing_lsb` should be set to True if the bytes
         produced should be created with the Least Signficiant Bit first.
         """
-        pass
+        pass  # pragma: no cover
 
     @classmethod
     def _clean_data(
@@ -54,7 +54,7 @@ class BaseMessage(ABC):
     def deserialize(
         self, data: bytes | bytearray | BitArray, incoming_msb: bool = False
     ) -> Self:
-        pass
+        pass  # pragma: no cover
 
     def _serialize_uint(
         self, value: int, bits: int, constrain: bool = True
