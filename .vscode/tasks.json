@@ -14,7 +14,7 @@
         },
         {
             "label": "tests",
-            "command": "poetry run pytest --cov=vtr/ --cov-report html",
+            "command": "poetry run pytest --cov --cov-report html",
             "type": "shell"
         }
     ]

@@ -32,7 +32,7 @@ KNOWN_MESSAGE_TYPES: dict[tuple[int, ...], BaseMessage] = {
 
 
 def parse_message(
-    data: bytes, incoming_msb: bool = True, ignore_unknwon: bool = False
+    data: bytes, incoming_msb: bool = True, ignore_unknown: bool = False
 ) -> BaseMessage | None:
     """
     Given a single message, parse and return a data class.
@@ -40,7 +40,7 @@ def parse_message(
     message_ids, message_data = gdl90py.utils.gdl90.deconstruct(data, incoming_msb)
     if message_ids not in KNOWN_MESSAGE_TYPES:
         # skip if asked to ignore
-        if ignore_unknwon:
+        if ignore_unknown:
             return None
 
         raise UnkownMessageID(f"Unknown message ID(s) {message_ids}.")
@@ -49,7 +49,7 @@ def parse_message(
 
 
 def parse_messages(
-    data: bytes, incoming_msb: bool = True, ignore_unknwon: bool = False
+    data: bytes, incoming_msb: bool = True, ignore_unknown: bool = False
 ) -> list[BaseMessage]:
     """
     Given multiple possible messages, parse and return a list of data classes.
@@ -65,7 +65,7 @@ def parse_messages(
         # find the next flag byte. offset by one to skip the first one
         message_end_index = data.index(gdl90py.utils.gdl90.FLAG_BYTE, 1)
         # parse the message
-        msg = parse_message(data[: message_end_index + 1], incoming_msb, ignore_unknwon)
+        msg = parse_message(data[: message_end_index + 1], incoming_msb, ignore_unknown)
         if msg is not None:
             output.append(msg)
         # slice the parsed data off
