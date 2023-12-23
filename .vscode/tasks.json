@@ -2,13 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "tests",
+            "label": "install",
+            "command": "poetry install --sync",
+            "type": "shell"
+        },
+        {
+            "label": "pre-commit",
+            "command": "poetry run pre-commit run --all-files",
             "type": "shell",
-            "command": "poetry run pytest --cov --cov-report html ",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
+            "dependsOn": ["install"]
+        },
+        {
+            "label": "tests",
+            "command": "poetry run pytest --cov=vtr/ --cov-report html",
+            "type": "shell"
         }
     ]
 }
