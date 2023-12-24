@@ -376,7 +376,7 @@ def test_traffic_report_deserialize_callsign(callsign_bytes: bytes, expected: in
 
 @pytest.mark.parametrize(
     "callsign",
-    (("!", "~", ",", "()", "adsas_56", "ab cd")),
+    (("!", "~", ",", "()", "adsas_56", "ab cd", "🤦‍♂️🙃👀")),
 )
 def test_traffic_report_serialize_invalid_callsign(callsign: str):
     tr = TrafficReportMessage(

@@ -85,7 +85,7 @@ class ForeFlightIDMessage(BaseMessage):
 
     @classmethod
     def _deserialize_device_long_name(cls, device_long_name_bitarray: BitArray) -> str:
-        return cls._deserialize_str(device_long_name_bitarray)
+        return cls._deserialize_str(device_long_name_bitarray).rstrip()
 
     def _serialize_is_msl(self) -> BitArray:
         return self._serialize_bool(self.is_msl)

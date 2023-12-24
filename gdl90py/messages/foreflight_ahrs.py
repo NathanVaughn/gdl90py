@@ -14,19 +14,19 @@ from gdl90py.utils.bitarray import pop_bits
 class ForeFlightAHRSMessage(BaseMessage):
     MESSAGE_IDS = (gdl90py.utils.gdl90.FOREFLIGHT_MESSAGE_ID, 1)
 
-    roll: int | None
+    roll: float | None
     """
     Degrees. Positive: right wing down. Negative: right wing up.
     """
-    pitch: int | None
+    pitch: float | None
     """
     Degrees. Positive: nose up. Negative: nose down
     """
-    is_magnetic_heading: bool
+    is_magnetic_heading: bool | None
     """
     Whether or not the heading is true heading or magnetic heading.
     """
-    heading: int | None
+    heading: float | None
     """
     Heading is in degrees.
     """
@@ -42,18 +42,19 @@ class ForeFlightAHRSMessage(BaseMessage):
     # constants
     ROLL_BITS = 16
     ROLL_RESOLUTION = 1 / 10
-    ROLL_MIN = -1800
-    ROLL_MAX = 1800
+    ROLL_MIN = -180
+    ROLL_MAX = 180
     ROLL_INVALID_VALUE = 0x7FFF
     PITCH_BITS = 16
     PITCH_RESOLUTION = 1 / 10
-    PITCH_MIN = -1800
-    PITCH_MAX = 1800
+    PITCH_MIN = -180
+    PITCH_MAX = 180
     PITCH_INVALID_VALUE = 0x7FFF
+    IS_MAGNETIC_HEADING_BITS = 1
     HEADING_BITS = 15
     HEADING_RESOLUTION = 1 / 10
-    HEADING_MIN = -3600
-    HEADING_MAX = 3600
+    HEADING_MIN = -360
+    HEADING_MAX = 360
     HEADING_INVALID_VALUE = 0xFFFF
     INDICATED_AIRSPEED_BITS = 16
     INDICATED_AIRSPEED_INVALID_VALUE = 0xFFFF
@@ -90,31 +91,33 @@ class ForeFlightAHRSMessage(BaseMessage):
 
         return cls._deserialize_resolution_int(pitch_bitarray, cls.PITCH_RESOLUTION)
 
-    def _serialize_is_magnetic_heading(self) -> BitArray:
-        return self._serialize_bool(self.is_magnetic_heading)
-
-    @classmethod
-    def _deserialize_is_magnetic_heading(
-        cls, is_magnetic_heading_bitarray: BitArray
-    ) -> bool:
-        return cls._deserialize_bool(is_magnetic_heading_bitarray)
-
     def _serialize_heading(self) -> BitArray:
-        if self.heading is None or not (
-            self.HEADING_MIN <= self.heading <= self.HEADING_MAX
+        if (
+            self.heading is None
+            or not (self.HEADING_MIN <= self.heading <= self.HEADING_MAX)
+            or self.is_magnetic_heading is None
         ):
-            return self._serialize_uint(self.HEADING_INVALID_VALUE, self.HEADING_BITS)
+            return self._serialize_uint(
+                self.HEADING_INVALID_VALUE,
+                self.IS_MAGNETIC_HEADING_BITS + self.HEADING_BITS,
+            )
 
-        return self._serialize_resolution_int(
+        return self._serialize_bool(
+            self.is_magnetic_heading
+        ) + self._serialize_resolution_int(
             self.heading, self.HEADING_RESOLUTION, self.HEADING_BITS
         )
 
     @classmethod
-    def _deserialize_heading(cls, heading_bitarray: BitArray) -> int | None:
+    def _deserialize_heading(
+        cls, heading_bitarray: BitArray
+    ) -> tuple[bool | None, int | None]:
         if heading_bitarray.uint == cls.HEADING_INVALID_VALUE:
-            return None
+            return None, None
 
-        return cls._deserialize_resolution_int(heading_bitarray, cls.HEADING_RESOLUTION)
+        return heading_bitarray[0], cls._deserialize_resolution_int(
+            heading_bitarray[cls.IS_MAGNETIC_HEADING_BITS :], cls.HEADING_RESOLUTION
+        )
 
     def _serialize_indicated_airspeed(self) -> BitArray:
         if self.indicated_airspeed is None:
@@ -154,7 +157,6 @@ class ForeFlightAHRSMessage(BaseMessage):
         all_data = (
             self._serialize_roll()
             + self._serialize_pitch()
-            + self._serialize_is_magnetic_heading()
             + self._serialize_heading()
             + self._serialize_indicated_airspeed()
             + self._serialize_true_airspeed()
@@ -169,8 +171,9 @@ class ForeFlightAHRSMessage(BaseMessage):
 
         roll = cls._deserialize_roll(pop_bits(data, cls.ROLL_BITS))
         pitch = cls._deserialize_pitch(pop_bits(data, cls.PITCH_BITS))
-        is_magnetic_heading = cls._deserialize_is_magnetic_heading(pop_bits(data, 1))
-        heading = cls._deserialize_heading(pop_bits(data, cls.HEADING_BITS))
+        is_magnetic_heading, heading = cls._deserialize_heading(
+            pop_bits(data, cls.IS_MAGNETIC_HEADING_BITS + cls.HEADING_BITS)
+        )
         indicated_airspeed = cls._deserialize_indicated_airspeed(
             pop_bits(data, cls.INDICATED_AIRSPEED_BITS)
         )
