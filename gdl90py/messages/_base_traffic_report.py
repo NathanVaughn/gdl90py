@@ -345,12 +345,12 @@ class BaseTrafficReport(BaseMessage):
             callsign = ""
 
         # this pads to the right as needed
-        return self._serialize_str(callsign, self.CALLSIGN_BITS)
+        return self._serialize_str(callsign, self.CALLSIGN_BITS, "ascii")
 
     @classmethod
     def _deserialize_callsign(cls, callsign_bitarray: BitArray) -> str:
         # remove trailing whitespace
-        return cls._deserialize_str(callsign_bitarray).rstrip()
+        return cls._deserialize_str(callsign_bitarray, "ascii").rstrip()
 
     @classmethod
     def _deserialize_emergency_priority_code(

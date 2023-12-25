@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import Type
+from typing import Literal, Type
 
 import pytest
 from bitstring import BitArray
@@ -214,32 +214,35 @@ def test__deserialize_bool():
 
 
 @pytest.mark.parametrize(
-    "value, bits, expected",
+    "value, bits, encoding, expected",
     [
-        ("N12345", 48, BitArray("0x4e3132333435")),
-        ("too long", 16, BitArray("0x746f")),
-        ("too short", 128, BitArray("0x746f6f2073686f727420202020202020")),
-        ("", 8, BitArray("0x20")),
+        ("N12345", 48, "ascii", BitArray("0x4e3132333435")),
+        ("too long", 16, "ascii", BitArray("0x746f")),
+        ("too short", 128, "ascii", BitArray("0x746f6f2073686f727420202020202020")),
+        ("", 8, "ascii", BitArray("0x20")),
     ],
 )
-def test__serialize_str(value: str, bits: int, expected: BitArray):
-    assert TestMessage()._serialize_str(value, bits) == expected
+def test__serialize_str(
+    value: str, bits: int, encoding: Literal["ascii", "utf-8"], expected: BitArray
+):
+    assert TestMessage()._serialize_str(value, bits, encoding) == expected
 
 
 @pytest.mark.parametrize(
-    "bitarray, expected",
+    "bitarray, encoding, expected",
     [
-        (BitArray("0x4e3132333435"), "N12345"),
-        (BitArray("0x746f"), "to"),
-        (BitArray("0x746f6f2073686f727420202020202020"), "too short       "),
-        (BitArray("0x20"), " "),
+        (BitArray("0x4e3132333435"), "ascii", "N12345"),
+        (BitArray("0x746f"), "ascii", "to"),
+        (BitArray("0x746f6f2073686f727420202020202020"), "ascii", "too short       "),
+        (BitArray("0x20"), "ascii", " "),
     ],
 )
 def test__deserialize_str(
     bitarray: BitArray,
+    encoding: Literal["ascii", "utf-8"],
     expected: int,
 ):
-    assert TestMessage._deserialize_str(bitarray) == expected
+    assert TestMessage._deserialize_str(bitarray, encoding) == expected
 
 
 @pytest.mark.parametrize(

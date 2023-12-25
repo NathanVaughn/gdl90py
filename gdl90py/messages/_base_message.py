@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from typing import Self, Type, TypeVar
+from typing import Literal, Self, Type, TypeVar
 
 from bitstring import BitArray
 
@@ -185,7 +185,9 @@ class BaseMessage(ABC):
         """
         return bitarray.bool
 
-    def _serialize_str(self, value: str, bits: int) -> BitArray:
+    def _serialize_str(
+        self, value: str, bits: int, encoding: Literal["ascii", "utf-8"]
+    ) -> BitArray:
         """
         Serialize a string.
         """
@@ -197,14 +199,16 @@ class BaseMessage(ABC):
         # strip extra characters
         value = value[:num_bytes]
 
-        return BitArray(bytes=value.encode("utf-8"), length=bits)
+        return BitArray(bytes=value.encode(encoding), length=bits)
 
     @classmethod
-    def _deserialize_str(cls, bitarray: BitArray) -> str:
+    def _deserialize_str(
+        cls, bitarray: BitArray, encoding: Literal["ascii", "utf-8"]
+    ) -> str:
         """
         Deserialize a string.
         """
-        return bitarray.bytes.decode("utf-8")
+        return bitarray.bytes.decode(encoding)
 
     def _serialize_enum(self, value: IntEnum, length: int) -> BitArray:
         """

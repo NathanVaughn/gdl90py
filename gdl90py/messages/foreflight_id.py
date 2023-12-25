@@ -69,23 +69,25 @@ class ForeFlightIDMessage(BaseMessage):
         return cls._deserialize_uint(device_serial_number_bitarray)
 
     def _serialize_device_name(self) -> BitArray:
-        return self._serialize_str(self.device_name, self.DEVICE_NAME_BITS)
+        return self._serialize_str(self.device_name, self.DEVICE_NAME_BITS, "utf-8")
 
     @classmethod
     def _deserialize_device_name(cls, device_name_bitarray: BitArray) -> str:
         # remove trailing whitespace
-        return cls._deserialize_str(device_name_bitarray).rstrip()
+        return cls._deserialize_str(device_name_bitarray, "utf-8").rstrip()
 
     def _serialize_device_long_name(self) -> BitArray:
         device_long_name = self.device_long_name
         if device_long_name is None:
             device_long_name = self.device_name
 
-        return self._serialize_str(device_long_name, self.DEVICE_LONG_NAME_BITS)
+        return self._serialize_str(
+            device_long_name, self.DEVICE_LONG_NAME_BITS, "utf-8"
+        )
 
     @classmethod
     def _deserialize_device_long_name(cls, device_long_name_bitarray: BitArray) -> str:
-        return cls._deserialize_str(device_long_name_bitarray).rstrip()
+        return cls._deserialize_str(device_long_name_bitarray, "utf-8").rstrip()
 
     def _serialize_is_msl(self) -> BitArray:
         return self._serialize_bool(self.is_msl)
