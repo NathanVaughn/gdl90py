@@ -20,5 +20,8 @@
                 "twixes.pypi-assistant"
             ]
         }
-    }
+    },
+    "mounts": [
+        "source=devcontainer-profile,target=/home/vscode/,type=volume"
+    ]
 }
