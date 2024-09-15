@@ -25,7 +25,7 @@ def test_ownship_geometric_altitude_deserialize_too_long():
 
 
 @pytest.mark.parametrize(
-    "ga, expected", ((-1000, b"\xFF\x38"), (0, b"\x00\x00"), (1000, b"\x00\xC8"))
+    "ga, expected", ((-1000, b"\xff\x38"), (0, b"\x00\x00"), (1000, b"\x00\xc8"))
 )
 def test_geo_altitude_serialize(ga: int, expected: bytes):
     oga = OwnshipGeometricAltitudeMessage(ga, False, None)
@@ -33,7 +33,7 @@ def test_geo_altitude_serialize(ga: int, expected: bytes):
 
 
 @pytest.mark.parametrize(
-    "gabytes, expected", ((b"\xFF\x38", -1000), (b"\x00\x00", 0), (b"\x00\xC8", 1000))
+    "gabytes, expected", ((b"\xff\x38", -1000), (b"\x00\x00", 0), (b"\x00\xc8", 1000))
 )
 def test_geo_altitude_deserialize(gabytes: bytes, expected: int):
     oga = OwnshipGeometricAltitudeMessage(expected, False, None)
@@ -45,9 +45,9 @@ def test_geo_altitude_deserialize(gabytes: bytes, expected: int):
 @pytest.mark.parametrize(
     "wi, vfom, expected",
     (
-        (True, None, b"\xFF\xFF"),
-        (False, 40000, b"\x7F\xFE"),
-        (False, 10, b"\x00\x0A"),
+        (True, None, b"\xff\xff"),
+        (False, 40000, b"\x7f\xfe"),
+        (False, 10, b"\x00\x0a"),
         (True, 50, b"\x80\x32"),
     ),
 )
@@ -59,9 +59,9 @@ def test_vertical_metrics_serialize(wi: bool, vfom: int, expected: bytes):
 @pytest.mark.parametrize(
     "vmbytes, expected_wi, expected_vfom",
     (
-        (b"\xFF\xFF", True, None),
-        (b"\x7F\xFE", False, 32766),
-        (b"\x00\x0A", False, 10),
+        (b"\xff\xff", True, None),
+        (b"\x7f\xfe", False, 32766),
+        (b"\x00\x0a", False, 10),
         (b"\x80\x32", True, 50),
     ),
 )

@@ -23,7 +23,7 @@ def lsb(bitarray: BitArray) -> BitArray:
     return new
 
 
-def lsb_bytes(bytes_: bytes) -> bytes:
+def lsb_bytes(bytes_: bytes | bytearray) -> bytes:
     """
     Flips the order of the bits in each byte.
     """
@@ -44,7 +44,7 @@ def lsb_int(int_: int, length: int = 8) -> int:
     return lsb(BitArray(uint=int_, length=length)).uint
 
 
-def format_hex(data: BitArray | bytes) -> str:
+def format_hex(data: BitArray | bytes | bytearray) -> str:
     """
     Print a bitarray as seperate hexadecimal pairs.
     """

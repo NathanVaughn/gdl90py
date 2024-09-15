@@ -1,19 +1,18 @@
-[tool.poetry]
-    name        = "gdl90py"
-    version     = "0.1.0"
-    description = ""
-    authors     = ["Nathan Vaughn <nvaughn51@gmail.com>"]
-    readme      = "README.md"
+[project]
+    name            = "gdl90py"
+    version         = "0.1.0"
+    description     = "GDL90 Python library"
+    authors         = [{ name = "Nathan Vaughn", email = "nath@nvaughn.email" }]
+    readme          = "README.md"
+    requires-python = ">=3.12"
+    dependencies    = ["bitstring == 4.2.3"]
 
-[tool.poetry.dependencies]
-    python    = "^3.12"
-    bitstring = "^4.1.4"
-
-
-[tool.poetry.group.dev.dependencies]
-    pytest     = "^8.0.0"
-    pytest-cov = "^5.0.0"
-    pre-commit = "^3.7.0"
+[tool.uv]
+    dev-dependencies = [
+        "pytest == 8.3.3",
+        "pytest-cov == 5.0.0",
+        "pre-commit == 3.8.0",
+    ]
 
 [tool.coverage.run]
     omit = ["tests/*"]
@@ -23,7 +22,3 @@
     venvPath                   = "."
     venv                       = ".venv"
     reportMissingParameterType = true
-
-[build-system]
-    requires      = ["poetry-core"]
-    build-backend = "poetry.core.masonry.api"

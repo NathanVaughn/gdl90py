@@ -27,7 +27,7 @@ def crc_table() -> list[int]:
     return table
 
 
-def compute_crc(data: bytes) -> bytes:
+def compute_crc(data: bytes | bytearray) -> bytes:
     """
     Computes the CRC for the given input and returns 2 bytes
     """
@@ -39,14 +39,15 @@ def compute_crc(data: bytes) -> bytes:
     return crc.to_bytes(length=2, byteorder="little")
 
 
-def check_crc(data: bytes, crc: bytes) -> None:
+def check_crc(data: bytes | bytearray, crc: bytes | bytearray) -> None:
     """
     Checks if CRC is valid.
     """
     computed_crc = compute_crc(data)
     if computed_crc != crc:
         raise InvalidCRC(
-            f"Recieved CRC {format_hex(crc)} does not match computed CRC {format_hex(computed_crc)}"
+            f"Recieved CRC {format_hex(crc)} does not match computed CRC {
+                format_hex(computed_crc)}"
         )
 
 
@@ -67,7 +68,7 @@ def escape(data: bytes) -> bytearray:
     return new_data
 
 
-def unescape(data: bytes) -> bytearray:
+def unescape(data: bytes | bytearray) -> bytearray:
     """
     Unescape the byte array
     """

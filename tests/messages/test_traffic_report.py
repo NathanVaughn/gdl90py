@@ -35,13 +35,13 @@ def test_traffic_report_serialize():
     )
     assert (
         tr.serialize(outgoing_lsb=False)
-        == b"\x7E\x14\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07\xB0\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00\x57\xD6\x7e"
+        == b"\x7e\x14\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78\x0f\x09\xa9\x07\xb0\x01\x20\x01\x4e\x38\x32\x35\x56\x20\x20\x20\x00\x57\xd6\x7e"
     )
 
 
 def test_traffic_report_deserialize():
     tr = TrafficReportMessage.deserialize(
-        b"\x7E\x14\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07\xB0\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00\x57\xD6\x7e"
+        b"\x7e\x14\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78\x0f\x09\xa9\x07\xb0\x01\x20\x01\x4e\x38\x32\x35\x56\x20\x20\x20\x00\x57\xd6\x7e"
     )
 
     assert tr.traffic_alert is False
@@ -117,9 +117,9 @@ def test_traffic_report_serialize_invalid_longitude(longitude: float):
         (-1000, b"\x00\x00"),
         (0, b"\x02\x80"),
         (1000, b"\x05\x00"),
-        (101350, b"\xFF\xE0"),
-        (200000, b"\xFF\xE0"),
-        (None, b"\xFF\xF0"),
+        (101350, b"\xff\xe0"),
+        (200000, b"\xff\xe0"),
+        (None, b"\xff\xf0"),
     ),
 )
 def test_traffic_report_serialize_pressure_altitude(
@@ -153,8 +153,8 @@ def test_traffic_report_serialize_pressure_altitude(
         (b"\x00\x00", -1000),
         (b"\x02\x80", 0),
         (b"\x05\x00", 1000),
-        (b"\xFF\xE0", 101350),
-        (b"\xFF\xF0", None),
+        (b"\xff\xe0", 101350),
+        (b"\xff\xf0", None),
     ),
 )
 def test_traffic_report_deserialize_pressure_altitude(
@@ -163,9 +163,9 @@ def test_traffic_report_deserialize_pressure_altitude(
     assert (
         TrafficReportMessage.deserialize(
             BitArray(
-                bytes=b"\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78"
+                bytes=b"\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78"
                 + pressure_altitude_bytes
-                + b"\xA9\x07\xB0\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00"
+                + b"\xa9\x07\xb0\x01\x20\x01\x4e\x38\x32\x35\x56\x20\x20\x20\x00"
             )
         ).pressure_altitude
         == expected
@@ -200,10 +200,10 @@ def test_traffic_report_serialize_integrity_unknown():
     "horizontal_velocity, expected",
     (
         (0, b"\x00\x00"),
-        (500, b"\x1F\x40"),
-        (4094, b"\xFF\xE0"),
-        (5000, b"\xFF\xE0"),
-        (None, b"\xFF\xF0"),
+        (500, b"\x1f\x40"),
+        (4094, b"\xff\xe0"),
+        (5000, b"\xff\xe0"),
+        (None, b"\xff\xf0"),
     ),
 )
 def test_traffic_report_serialize_horizontal_velocity(
@@ -235,9 +235,9 @@ def test_traffic_report_serialize_horizontal_velocity(
     "horizontal_velocity_bytes, expected",
     (
         (b"\x00\x00", 0),
-        (b"\x1F\x40", 500),
-        (b"\xFF\xE0", 4094),
-        (b"\xFF\xF0", None),
+        (b"\x1f\x40", 500),
+        (b"\xff\xe0", 4094),
+        (b"\xff\xf0", None),
     ),
 )
 def test_traffic_report_deserialize_horizontal_velocity(
@@ -246,9 +246,9 @@ def test_traffic_report_deserialize_horizontal_velocity(
     assert (
         TrafficReportMessage.deserialize(
             BitArray(
-                bytes=b"\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9"
+                bytes=b"\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78\x0f\x09\xa9"
                 + horizontal_velocity_bytes
-                + b"\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00"
+                + b"\x01\x20\x01\x4e\x38\x32\x35\x56\x20\x20\x20\x00"
             )
         ).horizontal_velocity
         == expected
@@ -260,11 +260,11 @@ def test_traffic_report_deserialize_horizontal_velocity(
     (
         (0, b"\x00\x00"),
         (64, b"\x00\x01"),
-        (-64, b"\x0F\xFF"),
-        (32576, b"\x01\xFD"),
-        (40000, b"\x01\xFE"),
-        (-32576, b"\x0E\x03"),
-        (-40000, b"\x0E\x02"),
+        (-64, b"\x0f\xff"),
+        (32576, b"\x01\xfd"),
+        (40000, b"\x01\xfe"),
+        (-32576, b"\x0e\x03"),
+        (-40000, b"\x0e\x02"),
         (None, b"\x08\x00"),
     ),
 )
@@ -298,9 +298,9 @@ def test_traffic_report_serialize_vertical_velocity(
     (
         (b"\x00\x00", 0),
         (b"\x00\x01", 64),
-        (b"\x0F\xFF", -64),
-        (b"\x01\xFD", 32576),
-        (b"\x0E\x03", -32576),
+        (b"\x0f\xff", -64),
+        (b"\x01\xfd", 32576),
+        (b"\x0e\x03", -32576),
         (b"\x08\x00", None),
     ),
 )
@@ -310,9 +310,9 @@ def test_traffic_report_deserialize_vertical_velocity(
     assert (
         TrafficReportMessage.deserialize(
             BitArray(
-                bytes=b"\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07"
+                bytes=b"\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78\x0f\x09\xa9\x07"
                 + vertical_velocity_bytes
-                + b"\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00"
+                + b"\x20\x01\x4e\x38\x32\x35\x56\x20\x20\x20\x00"
             )
         ).vertical_velocity
         == expected
@@ -365,7 +365,7 @@ def test_traffic_report_deserialize_callsign(callsign_bytes: bytes, expected: in
     assert (
         TrafficReportMessage.deserialize(
             BitArray(
-                bytes=b"\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07\xB0\x01\x20\x01"
+                bytes=b"\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78\x0f\x09\xa9\x07\xb0\x01\x20\x01"
                 + callsign_bytes
                 + b"\x00"
             )
@@ -405,5 +405,5 @@ def test_traffic_report_serialize_invalid_callsign(callsign: str):
 def test_traffic_report_deserialize_too_long():
     with pytest.raises(DataTooLong):
         TrafficReportMessage.deserialize(
-            b"\x7E\x14\x00\xAB\x45\x49\x1F\xEF\x15\xA8\x89\x78\x0F\x09\xA9\x07\xB0\x01\x20\x01\x4E\x38\x32\x35\x56\x20\x20\x20\x00\x00\xbb\xfc\x7e"
+            b"\x7e\x14\x00\xab\x45\x49\x1f\xef\x15\xa8\x89\x78\x0f\x09\xa9\x07\xb0\x01\x20\x01\x4e\x38\x32\x35\x56\x20\x20\x20\x00\x00\xbb\xfc\x7e"
         )
