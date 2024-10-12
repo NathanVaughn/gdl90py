@@ -23,8 +23,8 @@ repos:
   - hooks:
       - id: pyright
     repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.383
+    rev: v1.1.384
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.4.18
+    rev: 0.4.20
     hooks:
       - id: uv-lock
