@@ -22,6 +22,6 @@
         }
     },
     "mounts": [
-        "source=devcontainer-profile-${containerWorkspaceFolderBasename},target=/home/vscode/,type=volume"
+        "source=devcontainer-profile-${containerWorkspaceFolderBasename},target=/home/code/,type=volume"
     ]
 }
