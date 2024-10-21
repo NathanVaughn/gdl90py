@@ -25,6 +25,6 @@ repos:
     repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.385
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.4.24
+    rev: 0.4.25
     hooks:
       - id: uv-lock
