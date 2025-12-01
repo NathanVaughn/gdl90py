@@ -19,12 +19,12 @@ repos:
         id: ruff
       - id: ruff-format
     repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.3
+    rev: v0.14.7
   - hooks:
       - id: pyright
     repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.407
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.7
+    rev: 0.9.13
     hooks:
       - id: uv-lock
