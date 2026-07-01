@@ -16,14 +16,14 @@ repos:
   - hooks:
       - args:
           - --fix
-        id: ruff
+        id: ruff-check
       - id: ruff-format
     repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.19
   - hooks:
-      - id: pyright
-    repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.410
+      - id: ty
+    repo: https://github.com/astral-sh/ty-pre-commit
+    rev: v0.0.55
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.11.24
     hooks:

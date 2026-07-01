@@ -51,8 +51,9 @@ class BaseMessage(ABC):
         return data
 
     @abstractmethod
+    @classmethod
     def deserialize(
-        self, data: bytes | bytearray | BitArray, incoming_msb: bool = False
+        cls, data: bytes | bytearray | BitArray, incoming_msb: bool = False
     ) -> Self:
         pass  # pragma: no cover
 
