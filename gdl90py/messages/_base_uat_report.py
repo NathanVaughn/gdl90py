@@ -77,7 +77,7 @@ class BaseUATReportMessage(BaseMessage):
         bitarray = BitArray(bytes=self.uplink_payload)
         if len(bitarray) != self.UPLINK_PAYLOAD_BITS:
             raise UplinkDataWrongSize(
-                f"Uplink payload is not {self.UPLINK_PAYLOAD_BITS/8} bytes"
+                f"Uplink payload is not {self.UPLINK_PAYLOAD_BITS / 8} bytes"
             )
         return bitarray
 

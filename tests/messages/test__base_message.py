@@ -12,10 +12,10 @@ from gdl90py.messages._base_message import BaseMessage
 class TestMessage(BaseMessage):
     MESSAGE_IDS = 99
 
-    def serialize(self, outgoing_lsb: bool = True) -> None:
+    def serialize(self, outgoing_lsb: bool = True) -> None:  # ty:ignore[invalid-method-override]
         pass
 
-    def deserialize(self, data: BitArray) -> None:
+    def deserialize(self, data: BitArray) -> None:  # ty:ignore[invalid-method-override]
         pass
 
 

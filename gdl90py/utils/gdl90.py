@@ -47,7 +47,8 @@ def check_crc(data: bytes | bytearray, crc: bytes | bytearray) -> None:
     if computed_crc != crc:
         raise InvalidCRC(
             f"Recieved CRC {format_hex(crc)} does not match computed CRC {
-                format_hex(computed_crc)}"
+                format_hex(computed_crc)
+            }"
         )
 
 
