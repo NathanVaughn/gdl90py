@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import Literal, Type
+from typing import Literal
 
 import pytest
 from bitstring import BitArray
@@ -40,7 +40,7 @@ def test__serialize_uint(value: int, bits: int, constrain: bool, expected: BitAr
     ],
 )
 def test__serialize_uint_fail(
-    value: int, bits: int, constrain: bool, expected: Type[Exception]
+    value: int, bits: int, constrain: bool, expected: type[Exception]
 ):
     with pytest.raises(expected):
         TestMessage()._serialize_uint(value, bits, constrain)
@@ -273,7 +273,7 @@ def test__serialize_enum(value: IntEnum, length: int, expected: BitArray):
 )
 def test__deserialize_enum(
     bitarray: BitArray,
-    enum: Type[IntEnum],
+    enum: type[IntEnum],
     expected: IntEnum,
 ):
     assert TestMessage._deserialize_enum(bitarray, enum) == expected

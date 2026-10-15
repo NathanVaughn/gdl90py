@@ -51,4 +51,4 @@ def format_hex(data: BitArray | bytes | bytearray) -> str:
     if isinstance(data, BitArray):
         return " ".join(f"0x{h}" for h in textwrap.wrap(data.hex, 2))
     else:
-        return " ".join("0x{:02x}".format(b) for b in data)
+        return " ".join(f"0x{b:02x}" for b in data)

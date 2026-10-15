@@ -18,7 +18,7 @@ def test_message_count_serialize():
         CSA_requested=False,
         CSA_unavailable=False,
         UTC_timing_valid=False,
-        timestamp=datetime.datetime.now().time(),
+        timestamp=datetime.datetime.now(tz=datetime.UTC).time(),
         uplink_messages_count=4,
         basic_long_messages_count=567,
     )
@@ -39,9 +39,7 @@ def test_heartbeat_serialize():
         CSA_requested=False,
         CSA_unavailable=True,
         UTC_timing_valid=False,
-        timestamp=datetime.time(
-            hour=4, minute=20, second=0, tzinfo=datetime.timezone.utc
-        ),
+        timestamp=datetime.time(hour=4, minute=20, second=0, tzinfo=datetime.UTC),
         uplink_messages_count=234,
         basic_long_messages_count=678,
     )
@@ -63,9 +61,7 @@ def test_heartbeat_deserialize():
         CSA_requested=False,
         CSA_unavailable=True,
         UTC_timing_valid=False,
-        timestamp=datetime.time(
-            hour=4, minute=20, second=0, tzinfo=datetime.timezone.utc
-        ),
+        timestamp=datetime.time(hour=4, minute=20, second=0, tzinfo=datetime.UTC),
         uplink_messages_count=31,  # 5-bit integer limit
         basic_long_messages_count=678,
     )

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import IntEnum
-from typing import Literal, Self, Type, TypeVar
+from typing import Literal, Self, TypeVar
 
 from bitstring import BitArray
 
@@ -34,7 +34,7 @@ class BaseMessage(ABC):
         `outgoing_lsb` should be set to True if the bytes
         produced should be created with the Least Signficiant Bit first.
         """
-        pass  # pragma: no cover
+        # pragma: no cover
 
     @classmethod
     def _clean_data(
@@ -50,8 +50,8 @@ class BaseMessage(ABC):
 
         return data
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def deserialize(
         cls, data: bytes | bytearray | BitArray, incoming_msb: bool = False
     ) -> Self:
@@ -218,7 +218,7 @@ class BaseMessage(ABC):
         return self._serialize_uint(value.value, length)
 
     @classmethod
-    def _deserialize_enum(cls, bitarray: BitArray, enum: Type[T]) -> T:
+    def _deserialize_enum(cls, bitarray: BitArray, enum: type[T]) -> T:
         """
         Deserialize a Enum.
         """

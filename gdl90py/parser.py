@@ -1,5 +1,4 @@
 import gdl90py.utils.gdl90
-import typing
 from gdl90py.exceptions import UnkownMessageID
 from gdl90py.messages._base_message import BaseMessage
 from gdl90py.messages.basic_uat_report import BasicUATReportMessage
@@ -14,7 +13,7 @@ from gdl90py.messages.ownship_report import OwnshipReportMessage
 from gdl90py.messages.traffic_report import TrafficReportMessage
 from gdl90py.messages.uplink_data import UplinkDataMessage
 
-KNOWN_MESSAGE_TYPES: dict[tuple[int, ...], typing.Type[BaseMessage]] = {
+KNOWN_MESSAGE_TYPES: dict[tuple[int, ...], type[BaseMessage]] = {
     msg.MESSAGE_IDS: msg
     for msg in [
         OwnshipGeometricAltitudeMessage,
